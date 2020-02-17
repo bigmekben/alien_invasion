@@ -35,7 +35,7 @@ class Settings:
         # Difficulty
         self.ship_speed = 1.5
         self.bullet_speed = 1.0
-        self.alien_speed = 1.0
+        self.alien_speed = 0.5
         
         # Scoring
         self.alien_points = 50

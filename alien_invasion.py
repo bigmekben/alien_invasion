@@ -2,6 +2,7 @@ import sys
 from time import sleep
 
 import pygame
+import os # temp
 
 from settings import Settings
 from game_stats import GameStats
@@ -16,7 +17,14 @@ class AlienInvasion:
     
     def __init__(self):
         """Initialize the game, and create game resources."""
+        pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
         pygame.init()
+        pygame.mixer.init()
+         # Sound FX and music.
+        self.explosion_sound = pygame.mixer.Sound("sounds\EXPLOSION Bang 04.wav")
+        self.laser_sound = pygame.mixer.Sound("sounds\laser11.wav")
+        self.level_complete_sound = pygame.mixer.Sound("sounds\SUCCESS PICKUP Collect Chime 01.wav")
+        
         self.settings = Settings()
         
         self.screen = pygame.display.set_mode(
@@ -36,6 +44,7 @@ class AlienInvasion:
         
         # Make the Play button.
         self.play_button = Button(self, "Play")
+        
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -115,6 +124,7 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            self.laser_sound.play()
             
     def _update_bullets(self):
         """Update position of bullets and get rid of old bullets."""
@@ -136,10 +146,12 @@ class AlienInvasion:
         if collisions:
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
+                self.explosion_sound.play()
             self.sb.prep_score()
             self.sb.check_high_score()
             
         if not self.aliens:
+            self.level_complete_sound.play()
             # Destroy existing bullets and create new fleet.
             self.bullets.empty()
             self._create_fleet()
@@ -167,6 +179,7 @@ class AlienInvasion:
     def _ship_hit(self):
         """Respond to the ship being hit by an alien."""
         if self.stats.ships_left > 0:
+            self.explosion_sound.play()
             # Decrement ships left, and update scoreboard.
             self.stats.ships_left -= 1
             self.sb.prep_ships()
