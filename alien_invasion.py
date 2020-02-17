@@ -17,7 +17,6 @@ class AlienInvasion:
     
     def __init__(self):
         """Initialize the game, and create game resources."""
-        pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
         pygame.init()
         pygame.mixer.init()
          # Sound FX and music.
